@@ -6,20 +6,20 @@
 #include "file_io.h"
 
 
-void readPoints(char *fname, float ***points_p, int *n_pts_p, int *n_feats_p)
+void readPoints(char *fname, float ***points_p, int *n_pts_p, int *n_dims_p)
 {
     FILE *fin = fopen(fname, "r");
     assert(fin != NULL);
 
-    int status = fscanf(fin, "# %d %d", n_pts_p, n_feats_p);
+    int status = fscanf(fin, "# %d %d", n_pts_p, n_dims_p);
     assert(status == 2);
 
     int n_pts = *n_pts_p;
-    int n_feats = *n_feats_p;
+    int n_dims = *n_dims_p;
 
-    float **points = malloc2DFloatArray(n_pts, n_feats);
+    float **points = malloc2DFloatArray(n_pts, n_dims);
     for (int i = 0; i < n_pts; i++) {
-        for (int j = 0; j < n_feats; j++) {
+        for (int j = 0; j < n_dims; j++) {
             int s = fscanf(fin, "%f", &points[i][j]);
             assert(s == 1);
         }
@@ -31,7 +31,7 @@ void readPoints(char *fname, float ***points_p, int *n_pts_p, int *n_feats_p)
 }
 
 
-void initMeans(char *fname, float ***means_p, int *n_clusters_p, float **points, int n_pts, int n_feats)
+void initMeans(char *fname, float ***means_p, int *n_clusters_p, float **points, int n_pts, int n_dims)
 {
     FILE *fin = fopen(fname, "r");
     assert(fin != NULL);
@@ -41,13 +41,13 @@ void initMeans(char *fname, float ***means_p, int *n_clusters_p, float **points,
 
     int idx;
     int n_clusters = *n_clusters_p;
-    float **means = malloc2DFloatArray(n_clusters, n_feats);
+    float **means = malloc2DFloatArray(n_clusters, n_dims);
 
     for (int i = 0; i < n_clusters; i++) {
         int s = fscanf(fin, "%d", &idx);
         assert(s == 1);
 
-        for (int j = 0; j < n_feats; j++) {
+        for (int j = 0; j < n_dims; j++) {
             means[i][j] = points[idx][j];
         }
     }
