@@ -10,7 +10,8 @@
 
 void seqKMeans(
     float **points, float **means, float **clusters,
-    int *cluster_sizes, int n_pts, int n_feats, int n_clusters
+    int *cluster_sizes, int *membership,
+    int n_pts, int n_feats, int n_clusters
 )
 {
     /*
@@ -20,18 +21,24 @@ void seqKMeans(
      * cluster_sizes: Size of each new cluster.              [n_clusters]
      */
     int it;
-    bool shifted = true;
+    float delta = FLT_MAX;
 
     // Iterate while not exceeding maximum no. of iterations and delta < tolerance
-    for (it = 0; (it < MAX_ITER) && shifted; it++) {
+    for (it = 0; (it < MAX_ITER) && delta > TOL; it++) {
         // For every data point: find its nearest mean and add it to the corresponding cluster
+        delta = 0.0;
         for (int i = 0; i < n_pts; i++) {
             int m_idx = findNearestMean(means, points[i], n_feats, n_clusters);
+            if (m_idx != membership[i]) {
+                membership[i] = m_idx;
+                delta += 1.0;
+            }
             cluster_sizes[m_idx]++;
             for (int d = 0; d < n_feats; d++) {
                 clusters[m_idx][d] += points[i][d];
             }
         }
+        delta /= n_pts;
 
         // Compute the new means
         for (int i = 0; i < n_clusters; i++) {
@@ -41,13 +48,9 @@ void seqKMeans(
         }
 
         // Update the new means
-        shifted = false;
         for (int i = 0; i < n_clusters; i++) {
-            if (sumOfSquare(means[i], clusters[i], n_feats) > TOL) {
-                shifted = true;
-                for (int d = 0; d < n_feats; d++) {
-                    means[i][d] = clusters[i][d];
-                }
+            for (int d = 0; d < n_feats; d++) {
+                means[i][d] = clusters[i][d];
             }
         }
 

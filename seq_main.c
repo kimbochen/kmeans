@@ -26,7 +26,12 @@ int main(int argc, char **argv)
         cluster_sizes[i] = 0;
     }
 
-    seqKMeans(points, means, clusters, cluster_sizes, n_pts, n_feats, n_clusters);
+    int *membership = (int*) malloc(n_pts * sizeof(int));
+    for (int i = 0; i < n_pts; i++) {
+        membership[i] = -1;
+    }
+
+    seqKMeans(points, means, clusters, cluster_sizes, membership, n_pts, n_feats, n_clusters);
 
 #ifdef PRINT
     printf("# %d %d\n", n_clusters, n_feats);
@@ -37,4 +42,5 @@ int main(int argc, char **argv)
     free2DFloatArray(means);
     free2DFloatArray(clusters);
     free(cluster_sizes);
+    free(membership);
 }

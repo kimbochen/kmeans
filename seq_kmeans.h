@@ -1,7 +1,7 @@
 #ifndef SEQ_KMEANS_H
 #define SEQ_KMEANS_H
 
-void seqKMeans(float**, float**, float**, int*, int, int, int);
+void seqKMeans(float**, float**, float**, int*, int*, int, int, int);
 
 int findNearestMean(float**, float*, int, int);
 

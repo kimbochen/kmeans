@@ -1,6 +1,7 @@
 CC=gcc
 CFLAGS=-Wall -O2
 CUTLASS_LIB=-I/nfshome/tchen307/cutlass/include -I/nfshome/tchen307/cutlass/tools/util/include
+CUBLAS_LIB=-lcublas_static -lculibos -lcudart_static -lpthread -ldl -lcublasLt_static
 
 
 cutlass:
@@ -15,6 +16,10 @@ seq_kmeans.o: seq_kmeans.c
 
 file_io.o: file_io.c
 	$(CC) $(CFLAGS) -c file_io.c
+
+
+cuda_kmeans: pairwise_sqr_dist.cu
+	nvcc $(CUBLAS_LIB) pairwise_sqr_dist.cu
 
 
 test1: seq_km
